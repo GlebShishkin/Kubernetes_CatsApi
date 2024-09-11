@@ -1,0 +1,45 @@
+-- запуск контроллера с БД из стандартного image postgres
+docker-compose -f compose-env.yaml up -d
+
+-- создание image приложения-контроллера:
+./mvnw clean package -DskipTests
+docker build . -t glebshishkin68/cats-api:1.0.0
+
+-- нужно интсалировать cocolade через Windows Power Shell от имени администратора
+-- нужно интсалировать kind через chocolade
+
+-- инсталяцтя плагина ingress: ingress:
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
+
+-- создание/удаление кластера
+kind create cluster --config kind-config.yaml
+kind delete cluster
+
+-- узнаем ip-адресс:
+ipconfig
+10.17.27.176
+
+-- зная ip БД (на локал компе), можем запустить приложение-контроллер в docker-контейнере (без пода):
+docker run -ti --rm -e DATASOURCE_HOST=10.17.27.176 glebshishkin68/cats-api:1.0.0
+-- + зная внеш и внутр порты контроллера, можем запустить с указанием портов:
+docker run -ti --rm -e DATASOURCE_HOST=192.168.1.199 -p 8081:8080 glebshishkin68/cats-api:1.0.0
+
+-- нужно сделать push на DockerHub, т.к. image будет браться оттуда!!!:
+docker push glebshishkin68/cats-api:1.0.0
+
+-- создания деплоя (контейнера в подах):
+kubectl apply -f k8s/deployment.yaml
+-- удаление деплоя с допами
+kubectl delete deployments --all
+
+-- смотрим поды:
+kubectl get pods
+kubectl get pods --watch
+kubectl get pods -A -o wide
+
+-- анализ проблем подов:
+-- (см. https://habr.com/ru/companies/flant/articles/484954/)
+kubectl logs cats-api-5fdcb54857-6hctc
+kubectl describe pod cats-api-5fdcb54857-6hctc
+
