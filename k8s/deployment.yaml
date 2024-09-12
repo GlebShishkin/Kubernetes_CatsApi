@@ -26,7 +26,7 @@ spec:
             - containerPort: 8081 # внешний порт контейнера
           env:
             - name: DATASOURCE_HOST # переменная DATASOURCE_HOST, в которой передается ip БД
-              value: 10.17.8.74
+              value: 192.168.1.199
 
             - name: spring.mvc.servlet.path
               value: /cats-api

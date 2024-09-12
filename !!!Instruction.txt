@@ -6,7 +6,8 @@ docker-compose -f compose-env.yaml up -d
 docker build . -t glebshishkin68/cats-api:1.0.0
 
 -- нужно интсалировать cocolade через Windows Power Shell от имени администратора
--- нужно интсалировать kind через chocolade
+-- нужно интсалировать kind через chocolade:
+choco install kind
 
 -- инсталяцтя плагина ingress: ingress:
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
@@ -43,3 +44,24 @@ kubectl get pods -A -o wide
 kubectl logs cats-api-5fdcb54857-6hctc
 kubectl describe pod cats-api-5fdcb54857-6hctc
 
+-- прокинуть порт до поды:
+kubectl port-forward cats-api-7684ff47d6-9hr66 8899:8081
+-- проверить доступ до поды из браузера (для корректного отображения, возможно требуется stag):
+http://localhost:8899/cats
+
+-- создание сервиса:
+kubectl apply -f k8s/service.yaml
+kubectl get service
+
+-- создание ingress
+kubectl apply -f k8s/ingress.yaml
+-- запрос на ingress: "8888" взять из kind-config.yaml
+http://localhost:8888/cats-api/cats
+
+-- тестовые запросы на Ingress:
+http://localhost:8888/cats-api/cats/save
+{
+    "name": "Kot",
+    "birthDay": "2020-03-12"
+}
+http://localhost:8888/cats-api/cats/getAll

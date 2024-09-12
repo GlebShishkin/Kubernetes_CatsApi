@@ -13,13 +13,14 @@ public class CatController {
 
     private final CatService service;
 
-    @PostMapping
+    @PostMapping("/save")
     public Cat save(@RequestBody CatDto cat) {
         return service.save(cat);
     }
 
-    @GetMapping
+    @GetMapping("/getAll")
     public Iterable<Cat> getAll() {
+        System.out.println("######################");
         return service.getAll();
     }
 

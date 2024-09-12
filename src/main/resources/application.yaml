@@ -8,7 +8,7 @@ spring:
   datasource:
     # переменная DATASOURCE_HOST с ip БД, которая передается из командной строки или deployment.yaml
     url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5444/cats-api
-#    url: spring.datasource.url=jdbc:postgresql://db:5444/cats-api
+#    url: jdbc:postgresql://localhost:5444/cats-api
     username: admin
     password: admin
     driver-class-name: org.postgresql.Driver
